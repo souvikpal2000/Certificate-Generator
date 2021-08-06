@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Piazzolla:wght@200;300;400;900&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Piazzolla', serif;
+}
+:root{
+    --main-bg: #1e272e;
+    --main-color: #0097e6;
+}
+body{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.mainMenu{
+    background-color: var(--main-bg);
+}
+.navbar{
+    color: #fff;
+    background-color: var(--main-bg);
+    padding: 1rem;
+}
+.navbar a{
+    color: #fff;
+}
+.navbar a:hover{
+    color: var(--main-color);
+}
+footer{
+    width: 100%;
+    background-color: var(--main-bg);
+    margin-top: auto;
+}
+footer p{
+    margin: 0;
+    text-align: center;
+    color: #fff;
+    line-height: 4rem;
+    font-size: 1rem;
+}
+.navbar-toggler-icon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.navbar-toggler-icon .fa-bars{
+    color: var(--main-color);
+    font-size: 28px;
+}
+.navbar-toggler {
+    border-color: var(--main-color);
+} 
+.errimg img{
+    width: 55rem;
+}
+.error{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.error h1{
+    margin-bottom: 1rem;
+}
+.main-header-left button, .error button{
+    border: none;
+    padding: 0.8rem 1.8rem;
+    font-size: 1rem;
+    border-radius: 2rem;
+    text-transform: uppercase;
+    box-shadow: 0 8px 6px -6px #000;
+}
+.main-header-left button:hover, .error button:hover{
+    box-shadow: 0 8px 6px -6px var(--main-color);
+}
+.logo{
+    width: 2rem;
+}
+.fa-certificate, .textColor{
+    color: var(--main-color);
+}
+.mainHeader{
+    margin-top: auto;
+}
+.image01Div{
+    margin-left: 5rem;
+}
+.image01{
+    width: 25rem;
+}
+.main-header-left{
+    margin-top: auto;
+    margin-bottom: auto;
+}
+.main-header-left h1{
+    font-size: 3.3rem;
+}
+@media (max-width: 768px) {
+    .main-header-left{
+        height: auto;
+        padding: 2rem;
+    }
+    .main-header-right{
+        display: flex;
+        justify-content: center;
+        margin-bottom: 2rem;
+    }
+    .main-header-left h1{
+        font-size: 2rem;
+    }
+    .image01{
+        width: 16rem;
+    }
+    .image01Div{
+        margin-left: 0px;
+    }
+    .main-header-left button, .error button{
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+    .error{
+        margin-top: auto;
+        margin-bottom: auto;
+        text-align: center;
+    }
+    .error h1{
+        font-size: 2rem;
+    }
+}
