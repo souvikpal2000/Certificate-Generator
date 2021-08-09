@@ -4,10 +4,11 @@ const path = require('path');
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const cookieParser = require('cookie-parser');
-const { google } = require('googleapis');
+const { google, chat_v1 } = require('googleapis');
 const { GoogleSpreadsheet } = require('google-spreadsheet');;
 const secret = require('./client_secret.json');
 const { User, Certificate } = require('./models/users');
+const auth = require('./middleware/auth');
 const app = express();
 
 const staticPath = path.join(__dirname, "public");
@@ -19,16 +20,80 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(staticPath));
 app.use(cookieParser());
 
-app.get('/', (req,res) => {
+app.get('/',auth, (req,res) => {
+	if(req.email){
+		return res.render("index", {status: "loggedIn"});
+	}
 	res.render("index", {status: "loggedOut"});
 });
 
 app.get('/register', (req,res) => {
-	res.render("register", {status: "loggedOut"});
+	res.render("register", {status: "loggedOut", message: null, success: null});
+});
+
+app.post('/register', async (req,res) => {
+	try{
+		if(req.body.password != req.body.conPassword){
+			res.render("register", {status: "loggedOut", message: "Password doesn't match", success: "0"});
+		}
+		else{
+			const findUser = await User.findOne({email:req.body.email});
+			if(findUser){
+				return res.render("register", {status: "loggedOut", message: "This Email is Already Registered", success: "0"});
+			}
+			const hashedPassword = await bcrypt.hash(req.body.password, 10);
+			const register = new User({
+				name: req.body.name,
+				email: req.body.email,
+				password: hashedPassword,
+			}); 
+			await register.save();
+			res.render("register", {status: "loggedOut", message: "Registered Successfully", success: "1"});
+		}
+	}
+	catch(err){
+		console.log(err);
+	}
 });
 
 app.get('/login', (req,res) => {
-	res.render("login", {status: "loggedOut"});
+	res.render("login", {status: "loggedOut", message: null});
+});
+
+app.post('/login', async (req,res) => {
+	try{
+		const findUser = await User.findOne({email:req.body.email});
+		if(findUser){
+			const check = await bcrypt.compare(req.body.password, findUser.password);
+			if(check==true){
+				const token = await jwt.sign({ _id: findUser._id }, process.env.SECRET_KEY);
+				res.cookie("jwt", token, { expires:new Date(Date.now() + 253402300000000), httpOnly:true });
+				return res.redirect("/");
+			}
+			res.render("login", {status: "loggedOut", message: "Incorrect Password"});
+		}
+		else{
+			res.render('login', {status: "loggedOut", message: "Invalid Email"});
+		}
+	}
+	catch(err){
+		console.log(err);
+	}
+});
+
+app.get("/logout", (req,res) => {
+    res.clearCookie("jwt");
+    res.redirect("/");
+});
+
+app.get('/delete', async (req,res) => {
+	try{
+		await User.deleteMany();
+		res.send("All Users Deleted");
+	}
+	catch(err){
+		res.send(err);
+	}
 });
 
 app.get('*', (req,res) => {

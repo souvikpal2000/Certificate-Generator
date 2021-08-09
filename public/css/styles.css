@@ -87,8 +87,11 @@ footer p{
 .image01Div{
     margin-left: 5rem;
 }
-.image01{
+.image01,.loginImg{
     width: 25rem;
+}
+.registerImg{
+    width: 20rem;
 }
 .main-header-left{
     margin-top: auto;
@@ -97,15 +100,25 @@ footer p{
 .main-header-left h1{
     font-size: 3.3rem;
 }
+.alertBox{
+    display: flex;
+    justify-content: center;
+    height: 4.2rem;
+}
+.registerDiv{
+    margin-top: 2.5rem;
+}
 @media (max-width: 768px) {
     .main-header-left{
         height: auto;
-        padding: 2rem;
     }
     .main-header-right{
         display: flex;
         justify-content: center;
         margin-bottom: 2rem;
+    }
+    .info{
+        padding: 2rem;
     }
     .main-header-left h1{
         font-size: 2rem;
@@ -127,5 +140,8 @@ footer p{
     }
     .error h1{
         font-size: 2rem;
+    }
+    .registerImg{
+        width: 250px;
     }
 }
