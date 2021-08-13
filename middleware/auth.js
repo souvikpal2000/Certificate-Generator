@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
-const {User, Certificate} = require("../models/users");
+const { User, Sheet, Certificate, Email } = require("../models/users");
 
 const auth = async (req, res, next) => {
     if(!req.cookies.jwt){
-        req.email = null;
+        req.id = null;
         return next();
     }
     else{
@@ -11,10 +11,10 @@ const auth = async (req, res, next) => {
             const token = req.cookies.jwt;
             const verifyUser = jwt.verify(token, process.env.SECRET_KEY);
             const user = await User.findOne({_id:verifyUser._id});
-            req.email = user.email;
+            req.id = user._id;
             next();
         }catch(err){
-            req.email = null;
+            req.id = null;
             next();
         }
     }

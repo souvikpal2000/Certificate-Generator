@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/headerLinks') %>
+    <title>Add</title>
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+
+    <div class="container mt-3 mb-3">
+        <a href="/add/linksheet"><button class="addExcel">Link G-Sheet</button></a>
+ 
+        <% allData.forEach(data => { %>
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h4 class="card-title"><b><%= data.title %></b></h4>
+                    <div class="card-subtitle text-muted mb-2">
+                        <%= data.createdAt.toLocaleDateString() %>
+                    </div>
+                    <div class="card-text mb-2">
+                        <%= data.description %>
+                    </div>
+                 </div>
+             </div>
+        <% }) %>
+    </div>
+
+    <%- include('../partials/footer') %>
+</body>
+<%- include('../partials/footerLinks') %>
+</html>

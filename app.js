@@ -1,13 +1,11 @@
 require('./db/connection');
+require('./spreadsheet/connection');
 const express = require('express');
 const path = require('path');
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const cookieParser = require('cookie-parser');
-const { google, chat_v1 } = require('googleapis');
-const { GoogleSpreadsheet } = require('google-spreadsheet');;
-const secret = require('./client_secret.json');
-const { User, Certificate } = require('./models/users');
+const { User, Sheet, Certificate, Email } = require('./models/users');
 const auth = require('./middleware/auth');
 const app = express();
 
@@ -21,7 +19,7 @@ app.use(express.static(staticPath));
 app.use(cookieParser());
 
 app.get('/',auth, (req,res) => {
-	if(req.email){
+	if(req.id){
 		return res.render("index", {status: "loggedIn"});
 	}
 	res.render("index", {status: "loggedOut"});
@@ -86,6 +84,36 @@ app.get("/logout", (req,res) => {
     res.redirect("/");
 });
 
+app.get("/add", auth, async (req,res) => {
+	if(req.id){
+		const userData = await User.findOne({_id:req.id});
+		return res.render("add", {status: "loggedIn", allData: userData.sheets});
+	}
+	res.redirect('/');
+});
+
+app.get("/add/linksheet", auth, (req,res) => {
+	if(req.id){
+		return res.render("linksheet", {status: "loggedIn"});
+	}
+	res.redirect('/');
+});
+
+app.post("/add/linksheet", auth, async (req,res) => {
+	if(req.id){
+		const userData = await User.findOne({_id:req.id});
+		const sheetData = new Sheet({
+			title: req.body.title,
+			description: req.body.description,
+			googleId: req.body.googleId
+		});
+		userData.sheets.push(sheetData);
+		await userData.save();
+		return res.redirect('/add');
+	}
+	res.redirect("/");
+});
+
 app.get('/delete', async (req,res) => {
 	try{
 		await User.deleteMany();
@@ -110,48 +138,7 @@ app.listen(port, (err) => {
 	}
 });
 
-/*const client = new google.auth.JWT(
-	secret.client_email,
-	null,
-	secret.private_key,
-	['https://www.googleapis.com/auth/spreadsheets.readonly']
-);							</div>
+/*
 
-client.authorize((err) => {
-	if(err){
-		console.log(`Error : ${err}`);
-	}
-	else{
-		console.log("Google Spreadsheet Connected!!");
-		gsrun(client);
-	}
-});
 
-async function gsrun(auth){
-	try{
-		const doc = new GoogleSpreadsheet('1AQBxm9nCX304NXuI-adMx8web4sARDxe1VlFEqrAzWU');
- 		await doc.useServiceAccountAuth(secret);
- 		await doc.loadInfo();
- 		const sheet = doc.sheetsByIndex[0];
-
-		const sheets = google.sheets({version: 'v4', auth});
-  		sheets.spreadsheets.values.get({
-    		spreadsheetId: '1AQBxm9nCX304NXuI-adMx8web4sARDxe1VlFEqrAzWU',
-    		range: `${sheet.title}!B2:D`,
-  		}, (err, res) => {
-    		if (err) return console.log('The API returned an error: ' + err);
-    		const rows = res.data.values;
-    		if (rows.length) {
-				rows.forEach(row => {
-					console.log(`${row[0]}`);
-				}) 			
-    		} 
-    		else {
-      			console.log('No data found.');
-    		}
-  		});
-	}
-	catch(err){
-		console.log(`Error : ${err}`);
-	}
 }*/

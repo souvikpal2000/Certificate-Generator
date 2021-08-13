@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/headerLinks') %>
+    <title>Link G-Sheet</title>
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+
+    <div class="container-fluid mainHeader">
+        <div class="row">
+            <div class="col-md-10 col-12 mx-auto">
+                <div class="row">
+                    <div class="col-md-6 col-12 main-header-right sheetOuterDiv">
+                        <div class="sheetImgDiv">
+                            <img src="/images/excelImg.png" class="sheetImg">
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-12 main-header-left">
+                        <form method="POST" action="/add/linksheet">
+                            <div class="form-group">
+                                <label for="title">Title</label>
+                                <input required type="text" name="title" id="title" class="form-control" autocomplete="off">
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea required rows="4" name="description" id="description" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="markdown">Google Sheet ID</label>
+                                <input required type="text" name="googleId" id="googleId" class="form-control" autocomplete="off">
+                            </div>
+                                
+                            <div class="form-group row justify-content-center">
+                                <div>
+                                    <button>Link</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <%- include('../partials/footer') %>
+</body>
+<%- include('../partials/footerLinks') %>
+</html>

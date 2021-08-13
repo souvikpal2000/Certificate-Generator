@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 
-const certificateSchema = new mongoose.Schema({
+const emailSchema = new mongoose.Schema({
+	emailCC: {
+		type: String
+	},
+	emailBCC: {
+		type: String
+	},
 	emailSubject: {
 		type: String,
 		required: true
@@ -8,21 +14,31 @@ const certificateSchema = new mongoose.Schema({
 	emailBody: {
 		type: String,
 		required: true
-	},
-	emailCC: {
-		type: String
-	},
-	emailBCC: {
-		type: String
-	},
+	}
+});
+
+const certificateSchema = new mongoose.Schema({
 	certificatePath: {
 		type: String,
 		required: true
-	},
-	excelSheetId: {
+	}
+});
+
+const sheetSchema = new mongoose.Schema({
+	title: {
 		type: String,
 		required: true
 	},
+	description: {
+		type: String,
+		required: true
+	},
+	googleId: {
+		type: String,
+		required: true
+	},
+	certificate: certificateSchema,
+	email: emailSchema,
 	createdAt: {
         type: Date,
         default: Date.now
@@ -43,11 +59,15 @@ const userSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	},
-	certificates: [certificateSchema]
+	sheets: [sheetSchema]
 });
 
 const user = new mongoose.model("user", userSchema);
+const sheet = new mongoose.model("sheet", sheetSchema);
 const certificate = new mongoose.model("certificate", certificateSchema);
+const email = new mongoose.model("email", emailSchema);
 
 module.exports.User = user;
+module.exports.Sheet = sheet;
 module.exports.Certificate = certificate;
+module.exports.Email = email;
