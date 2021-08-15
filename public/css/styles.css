@@ -120,6 +120,16 @@ footer p{
 textarea {
     resize: none;
 }
+.uploadForm{
+    display: flex;
+    justify-content: center;
+}
+.uploadAlert{
+    max-height: 5.2rem;
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
 @media (max-width: 768px) {
     .main-header-left{
         height: auto;

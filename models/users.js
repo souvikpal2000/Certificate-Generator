@@ -15,14 +15,23 @@ const emailSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	}
-});
+},{ _id : false });
+
+const coordinateSchema = new mongoose.Schema({
+	xCoordinate:{
+		
+	},
+	yCoordinate: {
+
+	}
+},{ _id: false });
 
 const certificateSchema = new mongoose.Schema({
 	certificatePath: {
 		type: String,
 		required: true
 	}
-});
+},{ _id : false });
 
 const sheetSchema = new mongoose.Schema({
 	title: {

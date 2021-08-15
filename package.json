@@ -19,6 +19,8 @@
     "googleapis": "^39.2.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.13.5",
-    "nodemailer": "^6.6.3"
+    "multer": "^1.4.3",
+    "nodemailer": "^6.6.3",
+    "pdf-lib": "^1.16.0"
   }
 }

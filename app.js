@@ -1,10 +1,12 @@
-require('./db/connection');
-require('./spreadsheet/connection');
+require('./connections/dbconnection');
+require('./connections/sheetconnection');
 const express = require('express');
 const path = require('path');
+const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const cookieParser = require('cookie-parser');
+const multer = require('multer');
 const { User, Sheet, Certificate, Email } = require('./models/users');
 const auth = require('./middleware/auth');
 const app = express();
@@ -17,6 +19,18 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(staticPath));
 app.use(cookieParser());
+
+var uniqueNo;
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/uploads')
+    },
+    filename: function (req, file, cb) {
+        uniqueNo = Date.now();
+        cb(null, `${file.fieldname}-${uniqueNo}${path.extname(file.originalname)}`)
+    }
+});
+var upload = multer({ storage: storage });
 
 app.get('/',auth, (req,res) => {
 	if(req.id){
@@ -114,6 +128,65 @@ app.post("/add/linksheet", auth, async (req,res) => {
 	res.redirect("/");
 });
 
+app.post('/add/:id', auth, async (req,res) => {
+	if(req.id){
+		await User.updateOne({ _id: req.id }, { '$pull': { 'sheets': { "_id": req.params.id } } });
+		return res.redirect("/add");
+	}
+	res.redirect("/");
+});
+
+app.get('/add/template/:id', auth, async (req,res) => {
+	if(req.id){
+		const sheet = await User.findOne({ _id: req.id }, { 'sheets': { $elemMatch: { "_id": req.params.id } } });
+		//console.log(sheet.sheets[0]);
+		if(sheet.sheets[0].certificate != undefined){
+			res.render("upPre", {status: "loggedIn", sheetId: req.params.id, certificate: sheet.sheets[0].certificate.certificatePath});
+			return;
+		}
+		return res.render("upPre", {status: "loggedIn", sheetId: req.params.id, alertMessage: null});
+	}
+	res.redirect("/");
+});
+
+app.post('/add/template/:id', auth, upload.single('template'), async (req,res) => {
+	if(req.id){
+		if(req.file != undefined){
+			var x = 'uploads/'+ req.file.fieldname + "-" + uniqueNo + path.extname(req.file.originalname);
+			const upload = new Certificate({
+				certificatePath: x
+			});
+			const sheet = await User.findOne({ _id: req.id }, { 'sheets': { $elemMatch: { "_id": req.params.id } } });
+			if(sheet.sheets[0].certificate != undefined){
+				const deletePath = "public/" + sheet.sheets[0].certificate.certificatePath;
+				fs.unlinkSync(deletePath);
+			}
+			sheet.sheets[0].certificate = upload;
+			sheet.save();
+			return res.render("upPre", {status: "loggedIn", sheetId: req.params.id, alertMessage: null});
+		}
+		return res.render("upPre", {status: "loggedIn", sheetId: req.params.id, alertMessage: "Choose File"});
+	}
+	res.redirect('/');
+});
+
+app.post('/delete/:id', auth, async (req,res) => {
+	if(req.id){
+		const sheet = await User.findOne({ _id: req.id }, { 'sheets': { $elemMatch: { "_id": req.params.id } } });
+		if(sheet.sheets[0].certificate != undefined){
+			const deletePath = "public/" + sheet.sheets[0].certificate.certificatePath;
+			await User.updateOne({ _id: req.id }, { '$pull': { 'sheets': { "_id": req.params.id } } });
+			fs.unlink(deletePath, () => {
+            	res.redirect("/add");
+        	});
+			return;
+		}
+		await User.updateOne({ _id: req.id }, { '$pull': { 'sheets': { "_id": req.params.id } } });
+		return res.redirect("/add");
+	}
+	res.redirect('/');
+})
+
 app.get('/delete', async (req,res) => {
 	try{
 		await User.deleteMany();
@@ -137,8 +210,3 @@ app.listen(port, (err) => {
 		console.log("Something went Wrong");
 	}
 });
-
-/*
-
-
-}*/
