@@ -17,26 +17,49 @@
                         </div>
                     </div>
                     <div class="col-md-6 col-12 main-header-left">
-                        <form method="POST" action="/add/linksheet">
-                            <div class="form-group">
-                                <label for="title">Title</label>
-                                <input required type="text" name="title" id="title" class="form-control" autocomplete="off">
-                            </div>
-                            <div class="form-group">
-                                <label for="description">Description</label>
-                                <textarea required rows="4" name="description" id="description" class="form-control"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="markdown">Google Sheet ID</label>
-                                <input required type="text" name="googleId" id="googleId" class="form-control" autocomplete="off">
-                            </div>
-                                
-                            <div class="form-group row justify-content-center">
-                                <div>
-                                    <button>Link</button>
+                        <% if(sheetData) { %>
+                            <form method="POST" action="/edit/linksheet/<%= sheetData._id %>">
+                                <div class="form-group">
+                                    <label for="title">Title</label>
+                                    <input required type="text" name="title" id="title" class="form-control" autocomplete="off" value="<%= sheetData.title %>">
                                 </div>
-                            </div>
-                        </form>
+                                <div class="form-group">
+                                    <label for="description">Description</label>
+                                    <textarea required rows="4" name="description" id="description" class="form-control"><%= sheetData.description %></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="markdown">Google Sheet ID</label>
+                                    <input required type="text" name="googleId" id="googleId" class="form-control" autocomplete="off" value="<%= sheetData.googleId %>">
+                                </div>
+                                    
+                                <div class="form-group row justify-content-center">
+                                    <div>
+                                        <button>Edit</button>
+                                    </div>
+                                </div>
+                            </form>
+                        <% } else { %>
+                            <form method="POST" action="/add/linksheet">
+                                <div class="form-group">
+                                    <label for="title">Title</label>
+                                    <input required type="text" name="title" id="title" class="form-control" autocomplete="off">
+                                </div>
+                                <div class="form-group">
+                                    <label for="description">Description</label>
+                                    <textarea required rows="4" name="description" id="description" class="form-control"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="markdown">Google Sheet ID</label>
+                                    <input required type="text" name="googleId" id="googleId" class="form-control" autocomplete="off">
+                                </div>
+                                    
+                                <div class="form-group row justify-content-center">
+                                    <div>
+                                        <button>Link</button>
+                                    </div>
+                                </div>
+                            </form>
+                        <% } %>
                     </div>
                 </div>
             </div>

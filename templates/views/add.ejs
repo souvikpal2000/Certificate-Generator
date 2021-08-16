@@ -21,7 +21,7 @@
                         <%= data.description %>
                     </div>
                     <a href="/add/template/<%= data._id %>"><button class="btn btn-primary">Upload & Preview</button></a>
-                    <a href="/add/linksheet"><button class="btn btn-info">Edit</button></a>
+                    <a href="/edit/linksheet/<%= data._id %>"><button class="btn btn-info">Edit</button></a>
                     <form action='/delete/<%= data._id %>' method="POST" class="d-inline">
                         <button class="btn btn-danger">Delete</button>
                     </form>

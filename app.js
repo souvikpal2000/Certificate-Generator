@@ -108,7 +108,7 @@ app.get("/add", auth, async (req,res) => {
 
 app.get("/add/linksheet", auth, (req,res) => {
 	if(req.id){
-		return res.render("linksheet", {status: "loggedIn"});
+		return res.render("linksheet", {status: "loggedIn", sheetData: null});
 	}
 	res.redirect('/');
 });
@@ -128,13 +128,36 @@ app.post("/add/linksheet", auth, async (req,res) => {
 	res.redirect("/");
 });
 
-app.post('/add/:id', auth, async (req,res) => {
+app.get('/edit/linksheet/:id', auth, async (req,res) => {
+	if(req.id){
+		const sheet = await User.findOne({ _id: req.id }, { 'sheets': { $elemMatch: { "_id": req.params.id } } });
+		res.render("linksheet", {status: "loggedIn", sheetData: sheet.sheets[0]});
+		return;
+	}
+	res.redirect('/');
+});
+
+app.post('/edit/linksheet/:id', auth, async (req,res) => {
+	if(req.id){
+		await User.updateOne({"_id": req.id, "sheets._id": req.params.id}, {
+            $set:{
+                "sheets.$.title": req.body.title,
+                "sheets.$.description": req.body.description,
+                "sheets.$.googleId": req.body.googleId
+            }
+        });
+		return res.redirect('/add');
+	}
+	res.redirect('/');
+});
+
+/*app.post('/add/:id', auth, async (req,res) => {
 	if(req.id){
 		await User.updateOne({ _id: req.id }, { '$pull': { 'sheets': { "_id": req.params.id } } });
 		return res.redirect("/add");
 	}
 	res.redirect("/");
-});
+});*/
 
 app.get('/add/template/:id', auth, async (req,res) => {
 	if(req.id){
