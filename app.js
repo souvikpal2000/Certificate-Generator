@@ -99,11 +99,16 @@ app.get("/logout", (req,res) => {
 });
 
 app.get("/add", auth, async (req,res) => {
-	if(req.id){
-		const userData = await User.findOne({_id:req.id});
-		return res.render("add", {status: "loggedIn", allData: userData.sheets});
+	try{
+		if(req.id){
+			const userData = await User.findOne({_id:req.id});
+			return res.render("add", {status: "loggedIn", allData: userData.sheets});
+		}
+		res.redirect('/');
 	}
-	res.redirect('/');
+	catch(err){
+		console.log(err);
+	}
 });
 
 app.get("/add/linksheet", auth, (req,res) => {
@@ -164,8 +169,7 @@ app.get('/add/template/:id', auth, async (req,res) => {
 		const sheet = await User.findOne({ _id: req.id }, { 'sheets': { $elemMatch: { "_id": req.params.id } } });
 		//console.log(sheet.sheets[0]);
 		if(sheet.sheets[0].certificate != undefined){
-			res.render("upPre", {status: "loggedIn", sheetId: req.params.id, alertMessage: null, certificate: sheet.sheets[0].certificate.certificatePath});
-			return;
+			return res.render("upPre", {status: "loggedIn", sheetId: req.params.id, alertMessage: null, certificate: sheet.sheets[0].certificate.certificatePath});
 		}
 		return res.render("upPre", {status: "loggedIn", sheetId: req.params.id, alertMessage: null, certificate: null});
 	}
@@ -191,6 +195,25 @@ app.post('/add/template/:id', auth, upload.single('template'), async (req,res) =
 		return res.render("upPre", {status: "loggedIn", sheetId: req.params.id, alertMessage: "Choose File", certificate: null});
 	}
 	res.redirect('/');
+});
+
+app.post('/savecoordinates/:id', auth, async (req,res) => {
+	try{
+		if(req.id){
+			const sheet = await User.findOne({ _id: req.id }, { 'sheets': { $elemMatch: { "_id": req.params.id } } });
+			const pdfCoordinates = new Coordinate({
+				xCoordinate: req.body.xcoord,
+				yCoordinate: req.body.ycoord
+			});
+			sheet.sheets[0].certificate.coordinates = pdfCoordinates;
+			sheet.save();
+			return res.redirect('/add');
+		}
+		res.redirect('/');
+	}
+	catch(err){
+		console.log(err);
+	}
 });
 
 app.post('/delete/:id', auth, async (req,res) => {
