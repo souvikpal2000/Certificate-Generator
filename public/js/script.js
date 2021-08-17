@@ -32,6 +32,7 @@ const generatePDF = async() => {
     const pdfDoc = await PDFDocument.load(exBytes);
     const pages = pdfDoc.getPages();
     const firstPg = pages[0];
+    console.log(firstPg);
     firstPg.drawText("abcdxyz abcdxyz", {
         x : Number(document.querySelector("#xcoord").value),
         y : Number(document.querySelector("#ycoord").value)

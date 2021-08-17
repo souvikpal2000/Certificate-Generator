@@ -27,7 +27,7 @@
             </form>
             <% if(certificate) { %>
             <p class="templateHiddenTag" hidden>/<%= certificate %></p>
-            <iframe src="/<%= certificate %>" id="pdf" height="450px" class="mb-4"></iframe>
+            <iframe src="/<%= modifiedPdf %>" id="pdf" height="450px" class="mb-4"></iframe>
             <form method="POST" action="/savecoordinates/<%= sheetId %>">
                 <div class="form-group row coordinates">
                     <div class="col-12 col-md-3">

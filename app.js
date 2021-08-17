@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const cookieParser = require('cookie-parser');
 const multer = require('multer');
+const { PDFDocument, StandardFonts, rgb } = require('pdf-lib');
 const { User, Sheet, Certificate, Coordinate, Email } = require('./models/users');
 const auth = require('./middleware/auth');
 const app = express();
@@ -169,9 +170,21 @@ app.get('/add/template/:id', auth, async (req,res) => {
 		const sheet = await User.findOne({ _id: req.id }, { 'sheets': { $elemMatch: { "_id": req.params.id } } });
 		//console.log(sheet.sheets[0]);
 		if(sheet.sheets[0].certificate != undefined){
-			return res.render("upPre", {status: "loggedIn", sheetId: req.params.id, alertMessage: null, certificate: sheet.sheets[0].certificate.certificatePath});
+			if(sheet.sheets[0].certificate.coordinates != undefined){
+				const content = await PDFDocument.load(fs.readFileSync("public/"+sheet.sheets[0].certificate.certificatePath));
+				const pages = await content.getPages();
+				const firstPg = pages[0];
+				firstPg.drawText("abcdxyz abcdxyz", {
+					x : Number(sheet.sheets[0].certificate.coordinates.xCoordinate),
+					y : Number(sheet.sheets[0].certificate.coordinates.yCoordinate)
+				});
+				fs.writeFileSync('public/savedPdf/test.pdf', await content.save());
+				const path = "public/savedPdf/test.pdf".substring(7);
+				return res.render("upPre", {status: "loggedIn", sheetId: req.params.id, alertMessage: null, certificate: sheet.sheets[0].certificate.certificatePath, modifiedPdf: path});
+			}
+			return res.render("upPre", {status: "loggedIn", sheetId: req.params.id, alertMessage: null, certificate: sheet.sheets[0].certificate.certificatePath, modifiedPdf: sheet.sheets[0].certificate.certificatePath});
 		}
-		return res.render("upPre", {status: "loggedIn", sheetId: req.params.id, alertMessage: null, certificate: null});
+		return res.render("upPre", {status: "loggedIn", sheetId: req.params.id, alertMessage: null, certificate: null, modifiedPdf: null});
 	}
 	res.redirect("/");
 });
