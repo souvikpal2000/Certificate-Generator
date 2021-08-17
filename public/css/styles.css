@@ -64,7 +64,7 @@ footer p{
 .error h1{
     margin-bottom: 1rem;
 }
-.main-header-left button, .error button, .addExcel{
+.main-header-left button, .error button, .addExcel, .preview{
     border: none;
     padding: 0.8rem 1.8rem;
     font-size: 1rem;
@@ -72,7 +72,7 @@ footer p{
     text-transform: uppercase;
     box-shadow: 0 8px 6px -6px #000;
 }
-.main-header-left button:hover, .error button:hover, .addExcel:hover{
+.main-header-left button:hover, .error button:hover, .addExcel:hover, .preview:hover{
     box-shadow: 0 8px 6px -6px var(--main-color);
 }
 .logo{
@@ -129,6 +129,10 @@ textarea {
     display: flex;
     justify-content: center;
     margin-top: 1rem;
+}
+.coordinates, .previewSection{
+    display: flex;
+    justify-content: center;
 }
 @media (max-width: 768px) {
     .main-header-left{

@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const cookieParser = require('cookie-parser');
 const multer = require('multer');
-const { User, Sheet, Certificate, Email } = require('./models/users');
+const { User, Sheet, Certificate, Coordinate, Email } = require('./models/users');
 const auth = require('./middleware/auth');
 const app = express();
 
@@ -164,10 +164,10 @@ app.get('/add/template/:id', auth, async (req,res) => {
 		const sheet = await User.findOne({ _id: req.id }, { 'sheets': { $elemMatch: { "_id": req.params.id } } });
 		//console.log(sheet.sheets[0]);
 		if(sheet.sheets[0].certificate != undefined){
-			res.render("upPre", {status: "loggedIn", sheetId: req.params.id, certificate: sheet.sheets[0].certificate.certificatePath});
+			res.render("upPre", {status: "loggedIn", sheetId: req.params.id, alertMessage: null, certificate: sheet.sheets[0].certificate.certificatePath});
 			return;
 		}
-		return res.render("upPre", {status: "loggedIn", sheetId: req.params.id, alertMessage: null});
+		return res.render("upPre", {status: "loggedIn", sheetId: req.params.id, alertMessage: null, certificate: null});
 	}
 	res.redirect("/");
 });
@@ -186,9 +186,9 @@ app.post('/add/template/:id', auth, upload.single('template'), async (req,res) =
 			}
 			sheet.sheets[0].certificate = upload;
 			sheet.save();
-			return res.render("upPre", {status: "loggedIn", sheetId: req.params.id, alertMessage: null});
+			return res.redirect(`/add/template/${req.params.id}`);
 		}
-		return res.render("upPre", {status: "loggedIn", sheetId: req.params.id, alertMessage: "Choose File"});
+		return res.render("upPre", {status: "loggedIn", sheetId: req.params.id, alertMessage: "Choose File", certificate: null});
 	}
 	res.redirect('/');
 });

@@ -18,11 +18,13 @@ const emailSchema = new mongoose.Schema({
 },{ _id : false });
 
 const coordinateSchema = new mongoose.Schema({
-	xCoordinate:{
-		
+	xCoordinate: {
+		type: Number,
+		required: true
 	},
 	yCoordinate: {
-
+		type: Number,
+		required: true
 	}
 },{ _id: false });
 
@@ -30,7 +32,8 @@ const certificateSchema = new mongoose.Schema({
 	certificatePath: {
 		type: String,
 		required: true
-	}
+	},
+	coordinates: coordinateSchema
 },{ _id : false });
 
 const sheetSchema = new mongoose.Schema({
@@ -74,9 +77,11 @@ const userSchema = new mongoose.Schema({
 const user = new mongoose.model("user", userSchema);
 const sheet = new mongoose.model("sheet", sheetSchema);
 const certificate = new mongoose.model("certificate", certificateSchema);
+const coordinate = new mongoose.model("coordinate", coordinateSchema);
 const email = new mongoose.model("email", emailSchema);
 
 module.exports.User = user;
 module.exports.Sheet = sheet;
 module.exports.Certificate = certificate;
+module.exports.Coordinate = coordinate;
 module.exports.Email = email;
