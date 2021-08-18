@@ -8,7 +8,7 @@ const bcrypt = require("bcrypt");
 const cookieParser = require('cookie-parser');
 const multer = require('multer');
 const { PDFDocument, StandardFonts, rgb } = require('pdf-lib');
-const { User, Sheet, Certificate, Coordinate, Email } = require('./models/users');
+const { User, Sheet, Certificate, Properties, Email } = require('./models/users');
 const auth = require('./middleware/auth');
 const app = express();
 
@@ -170,13 +170,16 @@ app.get('/add/template/:id', auth, async (req,res) => {
 		const sheet = await User.findOne({ _id: req.id }, { 'sheets': { $elemMatch: { "_id": req.params.id } } });
 		//console.log(sheet.sheets[0]);
 		if(sheet.sheets[0].certificate != undefined){
-			if(sheet.sheets[0].certificate.coordinates != undefined){
+			if(sheet.sheets[0].certificate.properties != undefined){
 				const content = await PDFDocument.load(fs.readFileSync("public/"+sheet.sheets[0].certificate.certificatePath));
 				const pages = await content.getPages();
 				const firstPg = pages[0];
+				const color = sheet.sheets[0].certificate.properties.color;
 				firstPg.drawText("abcdxyz abcdxyz", {
-					x : Number(sheet.sheets[0].certificate.coordinates.xCoordinate),
-					y : Number(sheet.sheets[0].certificate.coordinates.yCoordinate)
+					x : Number(sheet.sheets[0].certificate.properties.xCoordinate),
+					y : Number(sheet.sheets[0].certificate.properties.yCoordinate),
+					size : Number(sheet.sheets[0].certificate.properties.fontSize),
+					color : rgb(parseInt(color.substr(1,2), 16)/255, parseInt(color.substr(3,2), 16)/255, parseInt(color.substr(5,2), 16)/255)
 				});
 				fs.writeFileSync('public/savedPdf/test.pdf', await content.save());
 				const path = "public/savedPdf/test.pdf".substring(7);
@@ -210,15 +213,17 @@ app.post('/add/template/:id', auth, upload.single('template'), async (req,res) =
 	res.redirect('/');
 });
 
-app.post('/savecoordinates/:id', auth, async (req,res) => {
+app.post('/saveproperties/:id', auth, async (req,res) => {
 	try{
 		if(req.id){
 			const sheet = await User.findOne({ _id: req.id }, { 'sheets': { $elemMatch: { "_id": req.params.id } } });
-			const pdfCoordinates = new Coordinate({
+			const pdfProperties = new Properties({
 				xCoordinate: req.body.xcoord,
-				yCoordinate: req.body.ycoord
+				yCoordinate: req.body.ycoord,
+				fontSize: req.body.fontSize,
+				color: req.body.color
 			});
-			sheet.sheets[0].certificate.coordinates = pdfCoordinates;
+			sheet.sheets[0].certificate.properties = pdfProperties;
 			sheet.save();
 			return res.redirect('/add');
 		}

@@ -28,19 +28,34 @@
             <% if(certificate) { %>
             <p class="templateHiddenTag" hidden>/<%= certificate %></p>
             <iframe src="/<%= modifiedPdf %>" id="pdf" height="450px" class="mb-4"></iframe>
-            <form method="POST" action="/savecoordinates/<%= sheetId %>">
+            <form method="POST" action="/saveproperties/<%= sheetId %>">
                 <div class="form-group row coordinates">
-                    <div class="col-12 col-md-3">
+                    <div class="col-12 col-md-5">
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-default">X-Coordinates</span>
                             <input type="number" name="xcoord" id="xcoord" class="form-control" aria-label="Sizing example input" required aria-describedby="inputGroup-sizing-default">
                         </div>
                     </div>
     
-                    <div class="col-12 col-md-3">
+                    <div class="col-12 col-md-5">
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-default">Y-Coordinates</span>
                             <input type="number" name="ycoord" id="ycoord" class="form-control" aria-label="Sizing example input" required aria-describedby="inputGroup-sizing-default">
+                        </div>		
+                    </div>
+                </div>
+                <div class="form-group row coordinates">
+                    <div class="col-12 col-md-5">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Font Size</span>
+                            <input type="number" name="fontSize" id="fontSize" class="form-control" aria-label="Sizing example input" required aria-describedby="inputGroup-sizing-default">
+                        </div>
+                    </div>
+    
+                    <div class="col-12 col-md-5">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Color</span>
+                            <input type="color" name="color" id="color" class="form-control" aria-label="Sizing example input" required aria-describedby="inputGroup-sizing-default">
                         </div>		
                     </div>
                 </div>

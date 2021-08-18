@@ -32,10 +32,12 @@ const generatePDF = async() => {
     const pdfDoc = await PDFDocument.load(exBytes);
     const pages = pdfDoc.getPages();
     const firstPg = pages[0];
-    console.log(firstPg);
+    const color =  document.querySelector("#color").value;
     firstPg.drawText("abcdxyz abcdxyz", {
         x : Number(document.querySelector("#xcoord").value),
-        y : Number(document.querySelector("#ycoord").value)
+        y : Number(document.querySelector("#ycoord").value),
+        size : Number(document.querySelector("#fontSize").value),
+        color : rgb(parseInt(color.substr(1,2), 16)/255, parseInt(color.substr(3,2), 16)/255, parseInt(color.substr(5,2), 16)/255)
     });
     const uri = await pdfDoc.saveAsBase64({dataUri: true});
     document.querySelector("#pdf").src = uri;
