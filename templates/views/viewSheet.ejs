@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/headerLinks') %>
+    <title>View Sheet</title>
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+
+    <% if(message) { %>
+        <div class="invalid">
+            <img src="/images/invalid.png" alt="" class="img-fluid invalidImg">
+            <h3 class="mt-3">Invalid GoogleId or Application not Linked</h3>
+        </div>
+    <% }else{ %>
+        <div class="container mt-3 mb-3">
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                      <th scope="col">Serial No.</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Phone No.</th>
+                      <th scope="col">Institution Name</th>
+                    </tr>
+                  </thead>
+                <tbody>
+                    <% count = 1 %>
+                    <% rows.forEach(row => { %>
+                        <tr>
+                            <th scope="row"><%= count++ %></th>
+                            <td><%= row[0] %></td>
+                            <td><%= row[1] %></td>
+                            <td><%= row[2] %></td>
+                            <td><%= row[3] %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    <% } %>
+
+    <%- include('../partials/footer') %>
+</body>
+<%- include('../partials/footerLinks') %>
+</html>

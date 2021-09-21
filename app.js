@@ -1,5 +1,5 @@
 require('./connections/dbconnection');
-require('./connections/sheetconnection');
+const { Auth } = require('./connections/sheetconnection');
 const express = require('express');
 const path = require('path');
 const fs = require("fs");
@@ -8,6 +8,9 @@ const bcrypt = require("bcrypt");
 const cookieParser = require('cookie-parser');
 const multer = require('multer');
 const { PDFDocument, StandardFonts, rgb } = require('pdf-lib');
+const { google, chat_v1 } = require('googleapis');
+const { GoogleSpreadsheet } = require('google-spreadsheet');;
+const secret = require('./client_secret.json');
 const { User, Sheet, Certificate, Properties, Email } = require('./models/users');
 const auth = require('./middleware/auth');
 const app = express();
@@ -249,7 +252,39 @@ app.post('/delete/:id', auth, async (req,res) => {
 		return res.redirect("/add");
 	}
 	res.redirect('/');
-})
+});
+
+app.get('/add/email/:id', auth, async (req,res) => {
+	if(req.id){
+		return res.render("addEmail", {status: "loggedIn"})
+	}
+	res.redirect('/');
+});
+
+app.get("/viewsheet/:id", auth, async (req,res) => {
+	if(req.id){
+		try{
+			const sheet = await User.findOne({ _id: req.id }, { 'sheets': { $elemMatch: { "_id": req.params.id } } });
+			
+			const doc = new GoogleSpreadsheet(sheet.sheets[0].googleId);
+			await doc.useServiceAccountAuth(secret);
+			await doc.loadInfo();
+			const sheetData = doc.sheetsByIndex[0];
+
+			const sheets = google.sheets({version: 'v4', auth: Auth});
+			const data = await sheets.spreadsheets.values.get({
+				spreadsheetId: sheet.sheets[0].googleId,
+				range: `${sheetData.title}!B2:E`
+			});
+			const rows = data.data.values;
+			return res.render("viewSheet", {status: "loggedIn", message: null, rows: rows});
+		}
+		catch(err){
+			return res.render("viewSheet", {status: "loggedIn", message: "invalid"});
+		}
+	}
+	res.redirect('/');
+});
 
 app.get('/delete', async (req,res) => {
 	try{

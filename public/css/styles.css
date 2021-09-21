@@ -134,6 +134,16 @@ textarea {
     display: flex;
     justify-content: center;
 }
+.invalid{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: auto;
+}
+.invalidImg{
+    width: 300px;
+}
 @media (max-width: 768px) {
     .main-header-left{
         height: auto;

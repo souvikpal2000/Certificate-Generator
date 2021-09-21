@@ -1,7 +1,5 @@
 const { google, chat_v1 } = require('googleapis');
-const { connection } = require('mongoose');
 const secret = require('../client_secret.json');
-
 const client = new google.auth.JWT(
 	secret.client_email,
 	null,
@@ -9,13 +7,13 @@ const client = new google.auth.JWT(
 	['https://www.googleapis.com/auth/spreadsheets.readonly']
 );							
 
-client.authorize((err) => {
+client.authorize(async (err) => {
 	if(err){
-		console.log(`Error : ${err}`);
+		return console.log(`Error : ${err}`);
 	}
 	else{
 		console.log("Google Spreadsheet Connected!!");
-		const sheets = google.sheets({version: 'v4', client});
-		//gsrun(client);
 	}
 });
+
+module.exports.Auth = client;
