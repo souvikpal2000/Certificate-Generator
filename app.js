@@ -289,7 +289,8 @@ app.get("/viewsheet/:id", auth, async (req,res) => {
 
 app.post("/viewsheet/:id", auth, (req,res) => {
 	if(req.id){
-		console.log(req.body.students);
+		console.log(req.body.studentsEmail);
+		console.log(req.body.studentsName);
 		return res.redirect(`/viewsheet/${req.params.id}`);
 	}
 	res.redirect("/");

@@ -43,40 +43,52 @@ const generatePDF = async() => {
     document.querySelector("#pdf").src = uri;
 }
 
-let array = [];
+let arrayEmail = [];
+let arrayName = [];
 function check(student){
     if(student.checked){
-        array.push(student.value);
-        document.querySelector(".checked").innerHTML = array;
+        arrayEmail.push(student.value);
+        let valuetwo = student.getAttribute("data-valuetwo");
+        arrayName.push(valuetwo);
+        document.querySelector(".checkedEmail").innerHTML = arrayEmail;
+        document.querySelector(".checkedName").innerHTML = arrayName;
     }
     else{
         document.querySelector(".students").checked = false;
         let i=0;
-        array.forEach(child => {
+        arrayEmail.forEach(child => {
             if(child === student.value){
-                array.splice(i,1);
+                arrayEmail.splice(i,1);
+                arrayName.splice(i,1);
                 return;
             }
             i++;
         });
-        document.querySelector(".checked").innerHTML = array;
+        document.querySelector(".checkedEmail").innerHTML = arrayEmail;
+        document.querySelector(".checkedName").innerHTML = arrayName;
     }
 }
 function checkAll(tag){
-    array = [];
+    arrayEmail = [];
+    arrayName = [];
     const students = document.getElementsByName("student");
     if(tag.checked){
         students.forEach(child => {
             child.checked = true;
-            array.push(child.value);
-            document.querySelector(".checked").innerHTML = array;
+            arrayEmail.push(child.value);
+            let valuetwo = child.getAttribute("data-valuetwo");
+            arrayName.push(valuetwo);
+            document.querySelector(".checkedEmail").innerHTML = arrayEmail;
+            document.querySelector(".checkedName").innerHTML = arrayName;
         });
     }
     else{
         students.forEach(child => {
             child.checked = false;
         });
-        array = [];
-        document.querySelector(".checked").innerHTML = array;
+        arrayEmail = [];
+        arrayName = []
+        document.querySelector(".checkedEmail").innerHTML = arrayEmail;
+        document.querySelector(".checkedName").innerHTML = arrayName;
     }
 }
