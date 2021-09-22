@@ -42,3 +42,41 @@ const generatePDF = async() => {
     const uri = await pdfDoc.saveAsBase64({dataUri: true});
     document.querySelector("#pdf").src = uri;
 }
+
+let array = [];
+function check(student){
+    if(student.checked){
+        array.push(student.value);
+        document.querySelector(".checked").innerHTML = array;
+    }
+    else{
+        document.querySelector(".students").checked = false;
+        let i=0;
+        array.forEach(child => {
+            if(child === student.value){
+                array.splice(i,1);
+                return;
+            }
+            i++;
+        });
+        document.querySelector(".checked").innerHTML = array;
+    }
+}
+function checkAll(tag){
+    array = [];
+    const students = document.getElementsByName("student");
+    if(tag.checked){
+        students.forEach(child => {
+            child.checked = true;
+            array.push(child.value);
+            document.querySelector(".checked").innerHTML = array;
+        });
+    }
+    else{
+        students.forEach(child => {
+            child.checked = false;
+        });
+        array = [];
+        document.querySelector(".checked").innerHTML = array;
+    }
+}

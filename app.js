@@ -106,6 +106,7 @@ app.get("/add", auth, async (req,res) => {
 	try{
 		if(req.id){
 			const userData = await User.findOne({_id:req.id});
+			userData.sheets.sort((a, b) => b.createdAt - a.createdAt);
 			return res.render("add", {status: "loggedIn", allData: userData.sheets});
 		}
 		res.redirect('/');
@@ -277,13 +278,21 @@ app.get("/viewsheet/:id", auth, async (req,res) => {
 				range: `${sheetData.title}!B2:E`
 			});
 			const rows = data.data.values;
-			return res.render("viewSheet", {status: "loggedIn", message: null, rows: rows});
+			return res.render("viewSheet", {status: "loggedIn", message: null, id: req.params.id, rows: rows});
 		}
 		catch(err){
 			return res.render("viewSheet", {status: "loggedIn", message: "invalid"});
 		}
 	}
 	res.redirect('/');
+});
+
+app.post("/viewsheet/:id", auth, (req,res) => {
+	if(req.id){
+		console.log(req.body.students);
+		return res.redirect(`/viewsheet/${req.params.id}`);
+	}
+	res.redirect("/");
 });
 
 app.get('/delete', async (req,res) => {

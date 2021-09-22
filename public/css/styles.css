@@ -64,7 +64,7 @@ footer p{
 .error h1{
     margin-bottom: 1rem;
 }
-.main-header-left button, .error button, .addExcel, .preview, .saveCoordinates{
+.main-header-left button, .error button, .addExcel, .preview, .saveCoordinates, .sendMail{
     border: none;
     padding: 0.8rem 1.8rem;
     font-size: 1rem;
@@ -72,7 +72,7 @@ footer p{
     text-transform: uppercase;
     box-shadow: 0 8px 6px -6px #000;
 }
-.main-header-left button:hover, .error button:hover, .addExcel:hover, .preview:hover, .saveCoordinates:hover{
+.main-header-left button:hover, .error button:hover, .addExcel:hover, .preview:hover, .saveCoordinates:hover, .sendMail:hover{
     box-shadow: 0 8px 6px -6px var(--main-color);
 }
 .logo{
@@ -188,5 +188,15 @@ textarea {
     }
     .loginImg, .sheetImg{
         width: 300px;
+    }
+    .invalidImg{
+        width: 250px;
+    }
+    .message{
+        display: flex;
+        text-align: center;
+    }
+    .message h3{
+        font-size: 1rem;
     }
 }
