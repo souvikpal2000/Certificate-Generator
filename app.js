@@ -9,11 +9,14 @@ const cookieParser = require('cookie-parser');
 const multer = require('multer');
 const { PDFDocument, StandardFonts, rgb } = require('pdf-lib');
 const { google, chat_v1 } = require('googleapis');
-const { GoogleSpreadsheet } = require('google-spreadsheet');;
+const { GoogleSpreadsheet } = require('google-spreadsheet');
+const nodemailer = require('nodemailer');
 const secret = require('./client_secret.json');
 const { User, Sheet, Certificate, Properties, Email } = require('./models/users');
 const auth = require('./middleware/auth');
 const app = express();
+
+require('dotenv').config();
 
 const staticPath = path.join(__dirname, "public");
 const viewsPath = path.join(__dirname, "templates/views");
@@ -257,9 +260,29 @@ app.post('/delete/:id', auth, async (req,res) => {
 
 app.get('/add/email/:id', auth, async (req,res) => {
 	if(req.id){
-		return res.render("addEmail", {status: "loggedIn"})
+		const sheet = await User.findOne({ _id: req.id }, { 'sheets': { $elemMatch: { "_id": req.params.id } } });
+		if(sheet.sheets[0].email != undefined){
+			return res.render("addEmail", {status: "loggedIn", edit: "possible", data: sheet.sheets[0]});
+		}
+		return res.render("addEmail", {status: "loggedIn", edit:"notPossible", data: sheet.sheets[0]});
 	}
 	res.redirect('/');
+});
+
+app.post('/add/email/:id', auth, async (req,res) => {
+	if(req.id){
+		const sheet = await User.findOne({ _id: req.id }, { 'sheets': { $elemMatch: { "_id": req.params.id } } });
+		const emailData = new Email({
+			cc: req.body.cc,
+			bcc: req.body.bcc,
+			subject: req.body.subject,
+			body: req.body.body
+		});
+		sheet.sheets[0].email = emailData;
+		sheet.save();
+		return res.redirect("/add");
+	}
+	res.redirect("/");
 });
 
 app.get("/viewsheet/:id", auth, async (req,res) => {

@@ -1,17 +1,17 @@
 const mongoose = require('mongoose');
 
 const emailSchema = new mongoose.Schema({
-	emailCC: {
+	cc: {
 		type: String
 	},
-	emailBCC: {
+	bcc: {
 		type: String
 	},
-	emailSubject: {
+	subject: {
 		type: String,
 		required: true
 	},
-	emailBody: {
+	body: {
 		type: String,
 		required: true
 	}

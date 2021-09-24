@@ -114,7 +114,7 @@ footer p{
 .sheetImgDiv{
     margin-top: 1rem;
 }
-.sheetImg{
+.sheetImg, .emailInfoImg{
     width: 400px;
 }
 textarea {
@@ -143,6 +143,12 @@ textarea {
 }
 .invalidImg{
     width: 300px;
+}
+.emailImgDiv{
+    margin-top: 3rem;
+}
+.emailInfo{
+    margin-top: 0.75rem;
 }
 @media (max-width: 768px) {
     .main-header-left{
@@ -198,5 +204,11 @@ textarea {
     }
     .message h3{
         font-size: 1rem;
+    }
+    .emailInfoImg{
+        width: 300px;
+    }
+    .emailImgDiv{
+        margin-top: 1rem;
     }
 }

@@ -7,8 +7,73 @@
 <body>
     <%- include('../partials/navbar') %>
     
-
-
+    <div class="container-fluid mainHeader">
+        <div class="row">
+            <div class="col-md-10 col-12 mx-auto">
+                <div class="row">
+                    <div class="col-md-6 col-12 main-header-right sheetOuterDiv">
+                        <div class="emailImgDiv">
+                            <img src="/images/email.png" class="emailInfoImg">
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-12 main-header-left emailInfo">
+                        <% if(edit == "possible"){ %>
+                            <form method="POST" action="/add/email/<%= data._id %>">
+                                <div class="form-group">
+                                    <label for="title">Title</label>
+                                    <input required type="text" name="subject" id="subject" class="form-control" autocomplete="off" value="<%= data.email.subject %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="description">Description</label>
+                                    <textarea required rows="4" name="body" id="body" class="form-control"><%= data.email.body %></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="markdown">CC Mail</label>
+                                    <input type="text" name="cc" id="cc" class="form-control" autocomplete="off" value="<%= data.email.cc %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="markdown">BCC Mail</label>
+                                    <input type="text" name="bcc" id="bcc" class="form-control" autocomplete="off" value="<%= data.email.bcc %>">
+                                </div>
+                                    
+                                <div class="form-group row justify-content-center">
+                                    <div>
+                                        <button>Edit</button>
+                                    </div>
+                                </div>
+                            </form>
+                        <% }else{ %>
+                            <form method="POST" action="/add/email/<%= data._id %>">
+                                <div class="form-group">
+                                    <label for="title">Subject</label>
+                                    <input required type="text" name="subject" id="subject" class="form-control" autocomplete="off">
+                                </div>
+                                <div class="form-group">
+                                    <label for="description">Body</label>
+                                    <textarea required rows="4" name="body" id="body" class="form-control"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="markdown">CC</label>
+                                    <input type="text" name="cc" id="cc" class="form-control" autocomplete="off">
+                                </div>
+                                <div class="form-group">
+                                    <label for="markdown">BCC</label>
+                                    <input type="text" name="bcc" id="bcc" class="form-control" autocomplete="off">
+                                </div>
+                                    
+                                <div class="form-group row justify-content-center">
+                                    <div>
+                                        <button>Save</button>
+                                    </div>
+                                </div>
+                            </form>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        
     <%- include('../partials/footer') %>
 </body>
 <%- include('../partials/footerLinks') %>
