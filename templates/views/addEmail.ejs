@@ -20,19 +20,19 @@
                         <% if(edit == "possible"){ %>
                             <form method="POST" action="/add/email/<%= data._id %>">
                                 <div class="form-group">
-                                    <label for="title">Title</label>
+                                    <label for="title">Subject</label>
                                     <input required type="text" name="subject" id="subject" class="form-control" autocomplete="off" value="<%= data.email.subject %>">
                                 </div>
                                 <div class="form-group">
-                                    <label for="description">Description</label>
+                                    <label for="description">Body</label>
                                     <textarea required rows="4" name="body" id="body" class="form-control"><%= data.email.body %></textarea>
                                 </div>
                                 <div class="form-group">
-                                    <label for="markdown">CC Mail</label>
+                                    <label for="markdown">CC</label>
                                     <input type="text" name="cc" id="cc" class="form-control" autocomplete="off" value="<%= data.email.cc %>">
                                 </div>
                                 <div class="form-group">
-                                    <label for="markdown">BCC Mail</label>
+                                    <label for="markdown">BCC</label>
                                     <input type="text" name="bcc" id="bcc" class="form-control" autocomplete="off" value="<%= data.email.bcc %>">
                                 </div>
                                     
