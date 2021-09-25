@@ -310,10 +310,16 @@ app.get("/viewsheet/:id", auth, async (req,res) => {
 	res.redirect('/');
 });
 
-app.post("/viewsheet/:id", auth, (req,res) => {
+app.post("/viewsheet/:id", auth, async (req,res) => {
 	if(req.id){
-		console.log(req.body.studentsEmail);
-		console.log(req.body.studentsName);
+		let names = [];
+		let emails = [];
+		names = req.body.studentsName.split(',');
+		emails = req.body.studentsEmail.split(',');
+		const sheet = await User.findOne({ _id: req.id }, { 'sheets': { $elemMatch: { "_id": req.params.id } } });
+		names.forEach(name => {
+
+		});
 		return res.redirect(`/viewsheet/${req.params.id}`);
 	}
 	res.redirect("/");

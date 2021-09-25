@@ -43,6 +43,7 @@ const generatePDF = async() => {
     document.querySelector("#pdf").src = uri;
 }
 
+document.querySelector('.sendMail').disabled = true;
 let arrayEmail = [];
 let arrayName = [];
 function check(student){
@@ -52,6 +53,9 @@ function check(student){
         arrayName.push(valuetwo);
         document.querySelector(".checkedEmail").innerHTML = arrayEmail;
         document.querySelector(".checkedName").innerHTML = arrayName;
+        if(arrayEmail.length > 0){
+            document.querySelector('.sendMail').disabled = false;
+        }
     }
     else{
         document.querySelector(".students").checked = false;
@@ -66,6 +70,9 @@ function check(student){
         });
         document.querySelector(".checkedEmail").innerHTML = arrayEmail;
         document.querySelector(".checkedName").innerHTML = arrayName;
+        if(arrayEmail.length == 0){
+            document.querySelector('.sendMail').disabled = true;
+        }
     }
 }
 function checkAll(tag){
@@ -81,6 +88,9 @@ function checkAll(tag){
             document.querySelector(".checkedEmail").innerHTML = arrayEmail;
             document.querySelector(".checkedName").innerHTML = arrayName;
         });
+        if(arrayEmail.length > 0){
+            document.querySelector('.sendMail').disabled = false;
+        }
     }
     else{
         students.forEach(child => {
@@ -90,5 +100,8 @@ function checkAll(tag){
         arrayName = []
         document.querySelector(".checkedEmail").innerHTML = arrayEmail;
         document.querySelector(".checkedName").innerHTML = arrayName;
+        if(arrayEmail.length == 0){
+            document.querySelector('.sendMail').disabled = true;
+        }
     }
 }

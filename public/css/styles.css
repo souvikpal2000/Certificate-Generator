@@ -150,6 +150,9 @@ textarea {
 .emailInfo{
     margin-top: 0.75rem;
 }
+button:disabled{
+    cursor: not-allowed;
+}
 @media (max-width: 768px) {
     .main-header-left{
         height: auto;
