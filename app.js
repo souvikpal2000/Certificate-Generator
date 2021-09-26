@@ -10,10 +10,12 @@ const multer = require('multer');
 const { PDFDocument, StandardFonts, rgb } = require('pdf-lib');
 const { google, chat_v1 } = require('googleapis');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
+const AdmZip = require('adm-zip');
 const nodemailer = require('nodemailer');
 const secret = require('./client_secret.json');
 const { User, Sheet, Certificate, Properties, Email } = require('./models/users');
 const auth = require('./middleware/auth');
+const { resolve } = require('path');
 const app = express();
 
 require('dotenv').config();
@@ -317,12 +319,74 @@ app.post("/viewsheet/:id", auth, async (req,res) => {
 		names = req.body.studentsName.split(',');
 		emails = req.body.studentsEmail.split(',');
 		const sheet = await User.findOne({ _id: req.id }, { 'sheets': { $elemMatch: { "_id": req.params.id } } });
-		names.forEach(name => {
+		if(sheet.sheets[0].certificate == undefined){
+			//Template not Uploaded
+			return;
+		}
+		else if(sheet.sheets[0].certificate.properties == undefined){
+			//Template Properties has not set
+			return;
+		}
+		async function saveCertificate(name){
+			//Save PDF inside certificates Folder for each Participants
+			const content = await PDFDocument.load(fs.readFileSync("public/"+sheet.sheets[0].certificate.certificatePath));
+			const pages = await content.getPages();
+			const firstPg = pages[0];
+			const color = sheet.sheets[0].certificate.properties.color;
+			firstPg.drawText(name, {
+				x : Number(sheet.sheets[0].certificate.properties.xCoordinate),
+				y : Number(sheet.sheets[0].certificate.properties.yCoordinate),
+				size : Number(sheet.sheets[0].certificate.properties.fontSize),
+				color : rgb(parseInt(color.substr(1,2), 16)/255, parseInt(color.substr(3,2), 16)/255, parseInt(color.substr(5,2), 16)/255)
+			});
+			fs.writeFileSync(`public/certificates/${name}.pdf`, await content.save());
+			return new Promise((resolve,reject) => resolve("Done"));
+		}
+		(async () => {
+			await Promise.all(
+				names.map(name => saveCertificate(name))
+			);
+			
+			//Make Zip of Files present in Certificates Folder
+			const certificatesDir = await fs.readdirSync(__dirname+"/public/certificates/");
+			const zip = new AdmZip();
+			for(let i = 0; i < certificatesDir.length; i++){
+				zip.addLocalFile(__dirname+"/public/certificates/"+certificatesDir[i]);
+			} 
+			const zipName = `${Date.now()}.zip`;
+			fs.writeFileSync(`public/email-zip/${zipName}`,  zip.toBuffer());
 
-		});
-		return res.redirect(`/viewsheet/${req.params.id}`);
+			//Delete Files from Certificates Folder
+			const directory = __dirname+'/public/certificates';
+			fs.readdir(directory, (err, files) => {
+				if (err) throw err;
+				for (const file of files) {
+					fs.unlink(path.join(directory, file), err => {
+						if (err) throw err;
+					});
+				}
+			});
+
+			//Send Email
+
+
+			//Delete Zip File present in email-zip Folder
+			let zipPath = __dirname+"/public/email-zip";
+			fs.readdir(zipPath, (err, files) => {
+				if (err) throw err;
+				for (const file of files) {
+					fs.unlink(path.join(zipPath, file), err => {
+						if (err) throw err;
+					});
+				}
+			});
+
+			return res.redirect(`/viewsheet/${req.params.id}`);	
+		})();
 	}
-	res.redirect("/");
+	else{
+		res.redirect("/");
+	}
 });
 
 app.get('/delete', async (req,res) => {
