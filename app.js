@@ -353,7 +353,7 @@ app.post("/viewsheet/:id", auth, async (req,res) => {
 			for(let i = 0; i < certificatesDir.length; i++){
 				zip.addLocalFile(__dirname+"/public/certificates/"+certificatesDir[i]);
 			} 
-			const zipName = `${Date.now()}.zip`;
+			const zipName = `Certificates.zip`;
 			fs.writeFileSync(`public/email-zip/${zipName}`,  zip.toBuffer());
 
 			//Delete Files from Certificates Folder
@@ -361,9 +361,11 @@ app.post("/viewsheet/:id", auth, async (req,res) => {
 			fs.readdir(directory, (err, files) => {
 				if (err) throw err;
 				for (const file of files) {
-					fs.unlink(path.join(directory, file), err => {
-						if (err) throw err;
-					});
+					if(file!="Info.txt"){
+						fs.unlink(path.join(directory, file), err => {
+							if (err) throw err;
+						});
+					}
 				}
 			});
 
@@ -371,15 +373,8 @@ app.post("/viewsheet/:id", auth, async (req,res) => {
 
 
 			//Delete Zip File present in email-zip Folder
-			let zipPath = __dirname+"/public/email-zip";
-			fs.readdir(zipPath, (err, files) => {
-				if (err) throw err;
-				for (const file of files) {
-					fs.unlink(path.join(zipPath, file), err => {
-						if (err) throw err;
-					});
-				}
-			});
+			let zipPath = __dirname+"/public/email-zip/Certificates.zip";
+			fs.unlinkSync(zipPath);
 
 			return res.redirect(`/viewsheet/${req.params.id}`);	
 		})();

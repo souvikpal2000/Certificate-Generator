@@ -1,0 +1,2 @@
+This Folder contains ZIP Format of Certificates of the selected Candidates who enrolled for the Course.
+But the ZIP will be deleted as soon as it is Mailed to all respective Candidates.
