@@ -153,6 +153,10 @@ textarea {
 button:disabled{
     cursor: not-allowed;
 }
+.messageSec{
+    display: flex;
+    justify-content: center;
+}
 @media (max-width: 768px) {
     .main-header-left{
         height: auto;

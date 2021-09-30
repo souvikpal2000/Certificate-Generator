@@ -291,7 +291,7 @@ app.get("/viewsheet/:id", auth, async (req,res) => {
 	if(req.id){
 		try{
 			const sheet = await User.findOne({ _id: req.id }, { 'sheets': { $elemMatch: { "_id": req.params.id } } });
-			
+
 			const doc = new GoogleSpreadsheet(sheet.sheets[0].googleId);
 			await doc.useServiceAccountAuth(secret);
 			await doc.loadInfo();
@@ -303,6 +303,12 @@ app.get("/viewsheet/:id", auth, async (req,res) => {
 				range: `${sheetData.title}!B2:E`
 			});
 			const rows = data.data.values;
+			if(sheet.sheets[0].certificate == undefined){
+				return res.render("viewSheet", {status: "loggedIn", message: "Please Upload Template", id: req.params.id, rows: rows});
+			}
+			else if(sheet.sheets[0].certificate.properties == undefined){
+				return res.render("viewSheet", {status: "loggedIn", message: "Please set Properties for Template", id: req.params.id, rows: rows});
+			}
 			return res.render("viewSheet", {status: "loggedIn", message: null, id: req.params.id, rows: rows});
 		}
 		catch(err){
@@ -319,14 +325,14 @@ app.post("/viewsheet/:id", auth, async (req,res) => {
 		names = req.body.studentsName.split(',');
 		emails = req.body.studentsEmail.split(',');
 		const sheet = await User.findOne({ _id: req.id }, { 'sheets': { $elemMatch: { "_id": req.params.id } } });
+		
 		if(sheet.sheets[0].certificate == undefined){
-			//Template not Uploaded
-			return;
+			return res.redirect(`/viewsheet/${req.params.id}`);	
 		}
 		else if(sheet.sheets[0].certificate.properties == undefined){
-			//Template Properties has not set
-			return;
+			return res.redirect(`/viewsheet/${req.params.id}`);	
 		}
+
 		async function saveCertificate(name){
 			//Save PDF inside certificates Folder for each Participants
 			const content = await PDFDocument.load(fs.readFileSync("public/"+sheet.sheets[0].certificate.certificatePath));
@@ -342,6 +348,7 @@ app.post("/viewsheet/:id", auth, async (req,res) => {
 			fs.writeFileSync(`public/certificates/${name}.pdf`, await content.save());
 			return new Promise((resolve,reject) => resolve("Done"));
 		}
+		
 		(async () => {
 			await Promise.all(
 				names.map(name => saveCertificate(name))
@@ -370,7 +377,27 @@ app.post("/viewsheet/:id", auth, async (req,res) => {
 			});
 
 			//Send Email
+			const transporter = nodemailer.createTransport({
+				service: "gmail",
+				auth: {
+					user: process.env.APP_EMAIL,
+					pass: process.env.APP_EMAIL_PASSWORD
+				}
+			});
 
+			await transporter.sendMail({
+				from: process.env.APP_EMAIL,
+				to: emails,
+				cc: sheet.sheets[0].email.cc,
+				bcc: sheet.sheets[0].email.bcc,
+				subject: sheet.sheets[0].email.subject,
+				text: sheet.sheets[0].email.body,
+				attachments: [
+					{
+						path: __dirname + '/public/email-zip/Certificates.zip'
+					}
+				]
+			});
 
 			//Delete Zip File present in email-zip Folder
 			let zipPath = __dirname+"/public/email-zip/Certificates.zip";
