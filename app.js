@@ -309,6 +309,9 @@ app.get("/viewsheet/:id", auth, async (req,res) => {
 			else if(sheet.sheets[0].certificate.properties == undefined){
 				return res.render("viewSheet", {status: "loggedIn", message: "Please set Properties for Template", id: req.params.id, rows: rows});
 			}
+			else if(sheet.sheets[0].email == undefined){
+				return res.render("viewSheet", {status: "loggedIn", message: "Please Fill Email Info", id: req.params.id, rows: rows});
+			}
 			return res.render("viewSheet", {status: "loggedIn", message: null, id: req.params.id, rows: rows});
 		}
 		catch(err){
@@ -326,10 +329,7 @@ app.post("/viewsheet/:id", auth, async (req,res) => {
 		emails = req.body.studentsEmail.split(',');
 		const sheet = await User.findOne({ _id: req.id }, { 'sheets': { $elemMatch: { "_id": req.params.id } } });
 		
-		if(sheet.sheets[0].certificate == undefined){
-			return res.redirect(`/viewsheet/${req.params.id}`);	
-		}
-		else if(sheet.sheets[0].certificate.properties == undefined){
+		if(sheet.sheets[0].certificate == undefined || sheet.sheets[0].certificate.properties == undefined || sheet.sheets[0].email == undefined){
 			return res.redirect(`/viewsheet/${req.params.id}`);	
 		}
 
@@ -358,7 +358,9 @@ app.post("/viewsheet/:id", auth, async (req,res) => {
 			const certificatesDir = await fs.readdirSync(__dirname+"/public/certificates/");
 			const zip = new AdmZip();
 			for(let i = 0; i < certificatesDir.length; i++){
-				zip.addLocalFile(__dirname+"/public/certificates/"+certificatesDir[i]);
+				if(certificatesDir[i] != "Info.txt"){
+					zip.addLocalFile(__dirname+"/public/certificates/"+certificatesDir[i]);
+				}
 			} 
 			const zipName = `Certificates.zip`;
 			fs.writeFileSync(`public/email-zip/${zipName}`,  zip.toBuffer());

@@ -105,3 +105,22 @@ function checkAll(tag){
         }
     }
 }
+
+function findEmail(){
+	let filter = document.getElementById('myInput').value.toUpperCase();
+	let table = document.querySelector('tbody');
+	let tr = table.getElementsByTagName('tr');
+	for(var i=0; i<tr.length; i++)
+	{
+		let email = tr[i].getElementsByTagName('td')[0];
+		if(email){
+			let textValue = email.textContent || email.innerHTML;
+			if(textValue.toUpperCase().indexOf(filter) > -1){
+				tr[i].style.display = "";
+			}
+			else{
+				tr[i].style.display = "none";
+			}
+		}
+	}
+}

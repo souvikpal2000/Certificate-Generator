@@ -157,6 +157,9 @@ button:disabled{
     display: flex;
     justify-content: center;
 }
+.alertMsg{
+    margin-bottom: -5px;
+}
 @media (max-width: 768px) {
     .main-header-left{
         height: auto;
