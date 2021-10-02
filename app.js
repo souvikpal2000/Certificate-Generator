@@ -406,7 +406,7 @@ app.post("/viewsheet/:id", auth, async (req,res) => {
 			fs.unlinkSync(zipPath);
 
 			console.log("Email Sent");
-			return res.redirect(`/viewsheet/${req.params.id}`);	
+			res.render("viewSheet", {status: "loggedIn", message: "success"});
 		})();
 	}
 	else{
