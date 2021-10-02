@@ -160,6 +160,64 @@ button:disabled{
 .alertMsg{
     margin-bottom: -5px;
 }
+/* Step holder */
+ul.timeline {
+    list-style-type: none;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+ /* Step vertical line */
+ul.timeline:before {
+    content: ' ';
+    background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+    display: inline-block;
+    position: absolute;
+    left: 16px;
+    width: 4px;
+    height: 100%;
+    z-index: 400;
+    border-radius: 1rem;
+}
+
+li.timeline-item {
+    margin: 20px 0;
+}
+
+/* Step item arrow */
+.timeline-arrow {
+    border-top: 0.5rem solid transparent;
+    background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+    border-bottom: 0.5rem solid transparent;
+    display: block;
+    position: absolute;
+    left: 2rem;
+}
+
+/* Step item circle marker */
+li.timeline-item::before {
+    content: ' ';
+    background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+    display: inline-block;
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+    left: 11px;
+    width: 14px;
+    height: 14px;
+    z-index: 400;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.instructions{
+    color: var(--main-color);
+}
+.timeline-item{
+    background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+}
+.step, .stepdesc{
+    color: black;
+}
 @media (max-width: 768px) {
     .main-header-left{
         height: auto;

@@ -405,12 +405,20 @@ app.post("/viewsheet/:id", auth, async (req,res) => {
 			let zipPath = __dirname+"/public/email-zip/Certificates.zip";
 			fs.unlinkSync(zipPath);
 
+			console.log("Email Sent");
 			return res.redirect(`/viewsheet/${req.params.id}`);	
 		})();
 	}
 	else{
 		res.redirect("/");
 	}
+});
+
+app.get("/instruction",auth, (req,res) => {
+	if(req.id){
+		return res.render("instruction", {status: "loggedIn"});
+	}
+	res.render("instruction", {status: "loggedOut"});
 });
 
 app.get('/delete', async (req,res) => {
